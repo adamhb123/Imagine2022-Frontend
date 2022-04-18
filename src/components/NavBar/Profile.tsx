@@ -26,11 +26,11 @@ export const Profile: React.FunctionComponent = () => {
       <DropdownItem onClick={() => login()}>Login</DropdownItem>
     </>
   );
-  // Authenticated
   return (
     <UncontrolledDropdown nav inNavbar>
       <DropdownToggle nav caret className="navbar-user">
         <img
+          id="user-avatar-image"
           className="rounded-circle"
           src={user_avatar_url}
           alt=""

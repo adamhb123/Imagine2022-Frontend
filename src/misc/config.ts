@@ -29,7 +29,7 @@ export const MAPBOX_TOKEN = _parseEnvVar(
   "http://localhost:3000/";*/
 
 export const API_BACKEND_URL = _parseEnvVar(
-  "https://imagine-2022-backend-git-imagine2022-backend.apps.okd4.csh.rit.edu",
+  "https://imagine-2022-backend-git-flask-imagine2022-backend.apps.okd4.csh.rit.edu/",
   "REACT_APP_API_BACKEND_URL_OKD",
   "REACT_APP_API_BACKEND_URL"
 );

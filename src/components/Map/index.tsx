@@ -7,6 +7,7 @@ import * as APIMiddleware from "../../misc/APIMiddleware";
 import "../../../node_modules/mapbox-gl/dist/mapbox-gl.css";
 import "./Map.scss";
 import "../../glitchytext.scss";
+import { useReactOidc } from "@axa-fr/react-oidc-context";
 
 const MARKER_UPDATE_INTERAL_MS = 10000;
 
@@ -80,14 +81,17 @@ export const Map: React.FunctionComponent = () => {
   const [zoom, setZoom] = useState(STARTING_ZOOM);
 
   function _setupControls() {
-    map.current?.addControl(new AdminPanelToggler(), "top-left");
-    map.current?.addControl(new DeveloperModeDisplay(), "top-left");
+    const { oidcUser } = useReactOidc();
+    if (oidcUser) {
+      map.current?.addControl(new AdminPanelToggler(), "top-left");
+      map.current?.addControl(new DeveloperModeDisplay(), "top-left");
+    }
     map.current?.addControl(new mapboxgl.NavigationControl());
     map.current?.addControl(new mapboxgl.FullscreenControl());
   }
 
   function _setMarkerDisplayState(state: "Updating" | "Success" | "Failed") {
-    const messageBox = document.getElementById("info-message-box");
+    const messageBox = document.getElementById("loading-markers-indicator");
     if (state === "Success") {
       if (messageBox) messageBox.style.visibility = "hidden";
       else _setMarkerDisplayState("Success");

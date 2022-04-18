@@ -1,0 +1,29 @@
+@import "../../variables.scss";
+#status-indicator-container {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  bottom: $guiOverlayMargin;
+  right: $guiOverlayMargin;
+}
+.status-indicator {
+  width: auto;
+  height: auto;
+  text-align: cemter;
+  padding: 10px;
+  margin: $guiOverlayMargin;
+  z-index: 4;
+  font-size: 1.2rem;
+  color: white;
+  background-color: black;
+  
+}
+
+#loading-markers-indicator {
+}
+#loading-markers-indicator.failed {
+  background-color: darkred;
+}
+
+#user-type-indicator {
+}
