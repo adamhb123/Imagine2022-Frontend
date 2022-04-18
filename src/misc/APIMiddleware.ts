@@ -9,6 +9,8 @@ import MarkerManager from "../components/Markers";
 import { MAX_BOUNDS } from "../components/Map";
 import { Beacon } from "../components/types";
 
+const FETCH_BEACON_DATA_TIMEOUT_MS = 7000;
+
 const TEST_DATA_SECTION_COUNT = 10;
 let testData: Beacon[];
 
@@ -35,17 +37,28 @@ export function initialize() {
   );
 }
 
-export async function retrieveBeacons(): Promise<Beacon[]> {
+export async function retrieveBeacons(
+  failureCallback?: Function,
+  provideError: boolean = false
+): Promise<Beacon[] | void> {
   return DEVELOPER_MODE
     ? testData
-    : await axios
-        .get(buildPath(API_BACKEND_URL, API_BEACON_LOCATIONS_URL))
-        .then((response: any) => _beaconJsonToList(response.data));
+    : await axios({
+        method: "get",
+        url: buildPath(API_BACKEND_URL, API_BEACON_LOCATIONS_URL),
+        timeout: FETCH_BEACON_DATA_TIMEOUT_MS,
+      })
+        .then((response: any) => _beaconJsonToList(response.data))
+        .catch((error: any) => {
+          provideError
+            ? failureCallback?.call(null, error)
+            : failureCallback?.call(null);
+          return;
+        });
 }
 
 async function main() {
   let result = await retrieveBeacons();
-  console.log(result);
 }
 
 if (require.main === module) {
