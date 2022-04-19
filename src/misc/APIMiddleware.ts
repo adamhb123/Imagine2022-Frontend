@@ -1,8 +1,9 @@
 const axios = require("axios").default;
 import {
+  API_ENDPOINTS,
   API_BACKEND_URL,
-  API_BEACON_LOCATIONS_URL,
   DEVELOPER_MODE,
+  API_BACKEND_TOKEN,
 } from "./config";
 import { buildPath } from "../misc/utility";
 import MarkerManager from "../components/Markers";
@@ -14,9 +15,7 @@ const FETCH_BEACON_DATA_TIMEOUT_MS = 7000;
 const TEST_DATA_SECTION_COUNT = 10;
 let testData: Beacon[];
 
-function _flipArray<T>(input: [T, T]): [T, T] {
-  return [input[1], input[0]];
-}
+const _flipArray = <T>(input: [T, T]): [T, T] => [input[1], input[0]];
 
 function _beaconJsonToList(json: any): Beacon[] {
   let list: Beacon[] = [];
@@ -45,7 +44,7 @@ export async function retrieveBeacons(
     ? testData
     : await axios({
         method: "get",
-        url: buildPath(API_BACKEND_URL, API_BEACON_LOCATIONS_URL),
+        url: buildPath(API_BACKEND_URL, API_ENDPOINTS.BEACON_LOCATIONS),
         timeout: FETCH_BEACON_DATA_TIMEOUT_MS,
       })
         .then((response: any) => _beaconJsonToList(response.data))
@@ -53,12 +52,28 @@ export async function retrieveBeacons(
           provideError
             ? failureCallback?.call(null, error)
             : failureCallback?.call(null);
-          return;
         });
+}
+
+export async function setBeaconHidden(id: string, hidden: boolean) {
+  return await axios({
+    method: "post",
+    url: buildPath(
+      API_BACKEND_URL,
+      hidden ? API_ENDPOINTS.HIDE_MARKER : API_ENDPOINTS.UNHIDE_MARKER
+    ),
+    headers: {
+      token: API_BACKEND_TOKEN,
+    },
+    data: {
+      id: id,
+    },
+  });
 }
 
 async function main() {
   let result = await retrieveBeacons();
+  console.log(result);
 }
 
 if (require.main === module) {

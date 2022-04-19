@@ -38,12 +38,6 @@ export const NavBar: React.FunctionComponent = () => {
                 About
               </NavLink>
             </NavItem>
-
-            <NavItem>
-              <NavLink to="/contact" className={"nav-link"}>
-                Contact
-              </NavLink>
-            </NavItem>
           </Nav>
           <Nav navbar className="ml-auto">
             <Profile />

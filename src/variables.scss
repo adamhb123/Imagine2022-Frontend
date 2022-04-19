@@ -1,56 +1,40 @@
-/**
- * Generics
- */
- $hackerGreen: #20C20E;
- $hackerGreenLinearGradient: linear-gradient(
-  90deg,
-  hsl(0deg 0% 0%) 1%,
-  hsl(120deg 100% 20%) 50%,
-  hsl(114deg 87% 41%) 99%
-);
+// Generics
+$hacker-green: #20c20e;
 
 @mixin stroke($color: #000, $size: 1px) {
   text-shadow:
-    -#{$size} -#{$size} 0 $color,
-     0        -#{$size} 0 $color,
-     #{$size} -#{$size} 0 $color,
-     #{$size}  0        0 $color,
-     #{$size}  #{$size} 0 $color,
-     0         #{$size} 0 $color,
-    -#{$size}  #{$size} 0 $color,
-    -#{$size}  0        0 $color;
+  -#{$size} -#{$size} 0 $color,
+  0        -#{$size} 0 $color,
+  #{$size} -#{$size} 0 $color,
+  #{$size}  0        0 $color,
+  #{$size}  #{$size} 0 $color,
+  0         #{$size} 0 $color,
+  -#{$size}  #{$size} 0 $color,
+  -#{$size}  0        0 $color;
 }
 
-/**
- * Navbar
- */
- $navbarBackgroundColor:rgb(15, 15, 15);
- $navbarPadding: 0 2rem;
- $navbarBrandImage: "../../../public/glitch.gif";
- $navbarBorderBottom: 3px solid;
- $navbarContainerMaxWidth: 90%;
- $navItemBorderBottomOnHover: 3px solid $hackerGreen;
+// Navbar
+$navbar-background-color: rgb(15, 15, 15);
+$navbar-padding: 0 2rem;
+$navbar-brand-image: '../../../public/glitch.gif';
+$navbar-border-bottom: 3px solid;
+$navbar-container-max-width: 90%;
+$nav-item-border-bottom-on-hover: 3px solid $hacker-green;
 
-/**
- * Markers
- */
-$markerSize: 32px;
-$markerColor: #fd3939;
-$markerBorder: 3px black solid;
+// Markers
+$marker-size: 32px;
+$marker-color: #fd3939;
+$marker-border: 3px #000 solid;
 
-/**
- * Popups
- */
-$popupTextColor: white;
-$popupBackgroundColor: #fd3939;
-$popupMaxWidth: 200px;
-$popupFont: "Open Sans", sans-serif;
-$popupBorder: 3px black solid;
-$popupBorderRadius: 10px;
+// Popups
+$popup-text-color: #fff;
+$popup-background-color: #fd3939;
+$popup-max-width: 200px;
+$popup-font: 'Open Sans', sans-serif;
+$popup-border: 3px #000 solid;
+$popup-border-radius: 10px;
 
-/**
- * GUI Overlay
- */
-$guiOverlayMargin: 10px;
-$guiOverlayCustomControlWidth: 180px;
-$guiOverlayCustomControlHeight: 35px;
+// GUI Overlay
+$gui-overlay-margin: 10px;
+$gui-overlay-custom-control-width: 180px;
+$gui-overlay-custom-control-height: 35px;

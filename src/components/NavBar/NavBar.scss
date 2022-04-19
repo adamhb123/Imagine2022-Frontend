@@ -1,9 +1,9 @@
-@import "../../variables";
+@import '../../variables';
 
 .navbar { 
-  padding: $navbarPadding;
+  background-color: $navbar-background-color !important;
   // No choice but to use !important here, as the csh css uses it as well
-  background-color: $navbarBackgroundColor !important;
+  padding: $navbar-padding;
   position: relative;
   z-index: 10;
 }
@@ -11,26 +11,26 @@
 
 
 .navbar > .container {
-  max-width: $navbarContainerMaxWidth;
+  max-width: $navbar-container-max-width;
 }
 
 // Classname/ID duplication required for overriding specificity
 .navbar-brand#brand {
-  background-image: url($navbarBrandImage);
-  background-size: 100%;
+  background-image: url($navbar-brand-image);
   background-position: center;
+  background-size: 100%;
   padding: 14px;
   @include stroke(#000, 2px);
 }
 
 .nav-item > a:hover {
-  border-bottom: $navItemBorderBottomOnHover;
+  border-bottom: $nav-item-border-bottom-on-hover;
   font-weight: bold;
   
 }
 
 .dropdown.nav-item > a:hover{
-  border-bottom: none;
+  border-bottom: 0;
 }
 
 @media (max-width: 370px) {

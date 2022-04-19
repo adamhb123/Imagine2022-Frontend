@@ -6,11 +6,15 @@ import {
   DropdownToggle,
   UncontrolledDropdown,
 } from "reactstrap";
+import { DEVELOPER_MODE } from "../../misc/config";
 import "./Profile.scss";
 
 export const Profile: React.FunctionComponent = () => {
   const { oidcUser, login, logout } = useReactOidc();
-  const name = oidcUser?.profile.preferred_username || "Guest";
+  const name =
+    oidcUser?.profile.preferred_username || DEVELOPER_MODE
+      ? "Developer"
+      : "Guest";
   const user_avatar_url = `https://profiles.csh.rit.edu/image/${
     oidcUser?.profile.preferred_username || "potate"
   }`;

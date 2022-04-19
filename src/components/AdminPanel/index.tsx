@@ -14,11 +14,12 @@ export const AdminPanel: React.FunctionComponent = () => {
       <Button id="close-button">X</Button>
       <hr />
       <div id="mode-selection-menu">
-        <Button id="add-marker">Add Markers</Button>
-        <Button id="remove-marker">Remove Markers</Button>
+        <Button id="unhide-markers">Unhide Markers</Button>
+        <Button id="hide-markers">Hide Markers</Button>
       </div>
       <div id="one-hit-menu">
-        <Button id="clear-all-markers">Clear All Markers</Button>
+        <Button id="clear-all-markers">Hide All Markers</Button>
+        <Button id="clear-all-markers">Unhide All Markers</Button>
       </div>
     </div>
   );

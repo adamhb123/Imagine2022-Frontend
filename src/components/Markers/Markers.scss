@@ -1,22 +1,22 @@
-@import "../../variables.scss";
+@import '../../variables';
 
 .marker {
-  background-color: $markerColor;
-  border: $markerBorder;
+  background-color: $marker-color;
+  border: $marker-border;
   border-radius: 100%; // Circle
-  width: $markerSize;
-  height: $markerSize;
   cursor: pointer;
+  height: $marker-size;
+  width: $marker-size;
 }
 
 .mapboxgl-popup {
-  max-width: $popupMaxWidth;
+  max-width: $popup-max-width;
 }
 
 .mapboxgl-popup-content {
+  background-color: $popup-background-color;
+  border: $popup-border;
+  border-radius: $popup-border-radius;
+  font-family: $popup-font;
   text-align: center;
-  font-family: $popupFont;
-  background-color: $popupBackgroundColor;
-  border: $popupBorder;
-  border-radius: $popupBorderRadius;
 }

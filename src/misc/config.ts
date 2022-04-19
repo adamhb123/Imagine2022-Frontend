@@ -34,11 +34,29 @@ export const API_BACKEND_URL = _parseEnvVar(
   "REACT_APP_API_BACKEND_URL"
 );
 
-export const API_BEACON_LOCATIONS_URL = _parseEnvVar(
-  "/beacons/locations",
-  "REACT_APP_API_BEACON_LOCATIONS_URL_OKD",
-  "REACT_APP_API_BEACON_LOCATIONS_URL"
+export const API_BACKEND_TOKEN = _parseEnvVar(
+  "https://imagine-2022-backend-git-flask-imagine2022-backend.apps.okd4.csh.rit.edu/",
+  "REACT_APP_API_BACKEND_TOKEN_OKD",
+  "REACT_APP_API_BACKEND_TOKEN"
 );
+
+export const API_ENDPOINTS = {
+  BEACON_LOCATIONS: _parseEnvVar(
+    "/beacons/locations",
+    "REACT_APP_API_BEACON_LOCATIONS_URL_OKD",
+    "REACT_APP_API_BEACON_LOCATIONS_URL"
+  ),
+  HIDE_MARKER: _parseEnvVar(
+    "/hide",
+    "REACT_APP_API_HIDE_MARKER_URL_OKD",
+    "REACT_APP_API_HIDE_MARKER_URL"
+  ),
+  UNHIDE_MARKER: _parseEnvVar(
+    "/unhide",
+    "REACT_APP_API_UNHIDE_MARKER_URL_OKD",
+    "REACT_APP_API_UNHIDE_MARKER_URL"
+  ),
+};
 
 // SSO
 const _CLIENT_ID = _parseEnvVar(

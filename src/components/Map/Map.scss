@@ -1,4 +1,4 @@
-@import "../../variables.scss";
+@import '../../variables';
 
 .main {
   display: flex;
@@ -8,11 +8,11 @@
 .map-container, .mapboxgl-canvas-container {
   display: flex;
   flex-flow: column;
-  width: 100vw;
   height: 100%;
   margin: 0;
   padding: 0;
   text-align: left;
+  width: 100vw;
 }
 
 .container {
@@ -20,27 +20,27 @@
 }
 
 #content-container {
-  width: 100vw;
   height: 100%;
-  max-width: none !important;
   margin: 0;
+  max-width: none !important;
+  width: 100vw;
 }
 
 .mapboxgl-canvas {
-  width: 100%;
   height: 100%;
+  width: 100%;
 }
 
 #developer-mode-display {
-  text-align: center;
-  margin: $guiOverlayMargin;
-  color: $hackerGreen;
-  background-color: black;
-  border: 1px solid $hackerGreen;
-  width: $guiOverlayCustomControlWidth;
-  height: $guiOverlayCustomControlHeight;
-  z-index: 5;
-  font-size: 1.1rem;
-  line-height: 12px;
+  background-color: #000;
+  border: 1px solid $hacker-green;
   border-radius: inherit;
+  color: $hacker-green;
+  font-size: 1.1rem;
+  height: $gui-overlay-custom-control-height;
+  line-height: 12px;
+  margin: $gui-overlay-margin;
+  text-align: center;
+  width: $gui-overlay-custom-control-width;
+  z-index: 5;
 }

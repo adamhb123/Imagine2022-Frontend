@@ -70,15 +70,21 @@ class MarkerManager {
       this._map.current.addSource("beacons", this._geojson);
       this._map.current.addLayer({
         id: "beacons",
-        type: "fill",
+        type: "fill-extrusion",
         source: "beacons", // reference the data source
         layout: {},
         paint: {
-          "fill-color": BEACON_MARKER_FILL_COLOR, // blue color fill
-          "fill-opacity": BEACON_MARKER_FILL_OPACITY,
+          // Get the `fill-extrusion-color` from the source `color` property.
+          "fill-extrusion-color": BEACON_MARKER_FILL_COLOR,
+          // Get `fill-extrusion-height` from the source `height` property.
+          "fill-extrusion-height": 10,
+          // Get `fill-extrusion-base` from the source `base_height` property.
+          "fill-extrusion-base": 0,
+          // Make extrusions slightly opaque to see through indoor walls.
+          "fill-extrusion-opacity": BEACON_MARKER_FILL_OPACITY,
         },
       });
-      this._map.current?.addLayer({
+      /*this._map.current?.addLayer({
         id: "outline",
         type: "line",
         source: "beacons",
@@ -87,7 +93,7 @@ class MarkerManager {
           "line-color": BEACON_MARKER_OUTLINE_COLOR,
           "line-width": BEACON_MARKER_OUTLINE_WIDTH,
         },
-      });
+      });*/
     }
   }
 

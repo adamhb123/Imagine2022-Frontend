@@ -1,29 +1,30 @@
-@import "../../variables.scss";
+@import '../../variables';
 #status-indicator-container {
+  bottom: $gui-overlay-margin;
   display: flex;
   flex-direction: column;
   position: absolute;
-  bottom: $guiOverlayMargin;
-  right: $guiOverlayMargin;
+  right: $gui-overlay-margin;
 }
+
 .status-indicator {
-  width: auto;
-  height: auto;
-  text-align: cemter;
-  padding: 10px;
-  margin: $guiOverlayMargin;
-  z-index: 4;
+  background-color: #000;
+  color: #fff;
+  filter: drop-shadow(0 1px 3px);
   font-size: 1.2rem;
-  color: white;
-  background-color: black;
-  
+  height: auto;
+  letter-spacing: 5px;
+  margin: $gui-overlay-margin;
+  padding: 10px;
+  width: auto;
+  /* Bright things in dark environments usually cast that light, giving off a glow */
+  z-index: 4;
 }
 
-#loading-markers-indicator {
-}
+// #loading-markers-indicator {}
+
 #loading-markers-indicator.failed {
-  background-color: darkred;
+  background-color: #8b0000;
 }
 
-#user-type-indicator {
-}
+// #user-type-indicator {}

@@ -23,6 +23,11 @@ export const MAX_BOUNDS = new mapboxgl.LngLatBounds(
 const BUILDING_FILL_COLOR = "#BC4A3C";
 const BUILDING_FILL_OPACITY = 0.9;
 
+const _setStatusIndicatorText = (element: HTMLElement, text: string) => {
+  element.textContent = text;
+  element.setAttribute("data-text", text);
+};
+
 mapboxgl.accessToken = MAPBOX_TOKEN as string;
 
 class DeveloperModeDisplay {
@@ -36,7 +41,7 @@ class DeveloperModeDisplay {
     this._messagebox = document.createElement("div");
     this._messagebox.id = "developer-mode-display";
     this._container.classList.add("mapboxgl-ctrl", "mapboxgl-ctrl-group");
-    this._messagebox.textContent = "Developer Mode";
+    _setStatusIndicatorText(this._messagebox, "Developer Mode");
     return this._container;
   }
   onRemove() {
@@ -76,13 +81,13 @@ export const Map: React.FunctionComponent = () => {
   const markerManager = new MarkerManager(map);
   let _updateInterval: ReturnType<typeof setInterval>;
   const [_loadingMarkers, setLoadingMarkers] = useState(false);
+  const _oidcUser = useReactOidc().oidcUser;
   const [_lat, setLat] = useState(STARTING_COORDINATES[0]);
   const [_long, setLng] = useState(STARTING_COORDINATES[1]);
   const [zoom, setZoom] = useState(STARTING_ZOOM);
 
   function _setupControls() {
-    const { oidcUser } = useReactOidc();
-    if (oidcUser) {
+    if (_oidcUser) {
       map.current?.addControl(new AdminPanelToggler(), "top-left");
       map.current?.addControl(new DeveloperModeDisplay(), "top-left");
     }
@@ -101,10 +106,10 @@ export const Map: React.FunctionComponent = () => {
       messageBox.style.visibility = "visible";
       if (state === "Updating") {
         messageBox.classList.remove("failed");
-        messageBox.textContent = "Markers Updating...";
+        _setStatusIndicatorText(messageBox, "Updating markers...");
       } else if (state === "Failed") {
         messageBox.classList.add("failed");
-        messageBox.textContent = "Marker Update Failed!";
+        _setStatusIndicatorText(messageBox, "Marker Update Failed!");
         console.error("Marker update timed out...retrying");
       }
     }
@@ -159,7 +164,7 @@ export const Map: React.FunctionComponent = () => {
         maxBounds: MAX_BOUNDS,
       });
       if (map.current) {
-        map.current?.on("load", () => {
+        map.current.on("load", () => {
           markerManager.initialize();
           APIMiddleware.initialize();
           // Insert the layer beneath any symbol layer.
@@ -211,7 +216,6 @@ export const Map: React.FunctionComponent = () => {
             },
             labelLayerId
           );
-
           // Put layers on top of layer-view hierarchy, update font-size
           layers
             ?.filter((layer: mapboxgl.AnyLayer) => layer.id.includes("label"))
