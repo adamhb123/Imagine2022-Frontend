@@ -8,11 +8,8 @@ import "./Markers.scss";
 
 const BEACON_MARKER_FILL_COLOR = "#00ff00";
 const BEACON_MARKER_FILL_OPACITY = 0.6;
-const BEACON_MARKER_OUTLINE_COLOR = "#000";
-const BEACON_MARKER_OUTLINE_WIDTH = 3;
 
 const BEACON_MARKER_RADIUS_KM = 0.01;
-const BEACON_MARKER_RANDOMIZE_RADII = false;
 
 const BEACON_GEN_RANDOMNESS_MAGNITUDE = 0.003;
 
@@ -159,7 +156,7 @@ class MarkerManager {
   }
 
   addMarker(name: string, center: Position) {
-    // Do not add if duplicate exists
+    // Add brand-spanking new markers
     if (
       !this._geojson.data.features
         .map((feature: any) => feature.name)
@@ -172,15 +169,33 @@ class MarkerManager {
           type: "Polygon",
           coordinates: [
             this._generateGeoJSONCircleCoordinates(
-              BEACON_MARKER_RANDOMIZE_RADII
-                ? MarkerManager._random(BEACON_MARKER_RADIUS_KM)
-                : BEACON_MARKER_RADIUS_KM,
+              BEACON_MARKER_RADIUS_KM,
               center
             ),
           ],
         },
-        properties: {},
+        properties: {
+          center: center,
+        },
       });
+      this.updateRequired = true;
+    } // Already exists: update if different coordinates
+    else {
+      let filteredFeature = this._geojson.data.features.filter(
+        (feature) => feature.id === name && feature.properties.center !== center
+      );
+      if (filteredFeature.length) {
+        // Use forEach "just in case", though filteredFeature should only have
+        // one element in reality.
+        filteredFeature.forEach((feature) => {
+          feature.geometry.coordinates = [
+            this._generateGeoJSONCircleCoordinates(
+              BEACON_MARKER_RADIUS_KM,
+              center
+            ),
+          ];
+        });
+      }
       this.updateRequired = true;
     }
   }

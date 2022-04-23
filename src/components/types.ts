@@ -4,11 +4,15 @@ import {
   Feature,
   Polygon,
   GeoJsonProperties,
+  Position,
 } from "geojson";
 export type MutableMapRef = React.MutableRefObject<mapboxgl.Map | undefined>;
 
 export interface PolygonalFeature extends Feature<Polygon, GeoJsonProperties> {
   name: string;
+  properties: {
+    center: Position;
+  };
 }
 
 export interface PolygonalFeatureCollection
