@@ -1,6 +1,6 @@
 import React, { useRef, useState, useLayoutEffect, createRef } from "react";
 import mapboxgl from "mapbox-gl";
-import { MAPBOX_TOKEN } from "../../misc/config";
+import { DEVELOPER_MODE, MAPBOX_TOKEN } from "../../misc/config";
 import MarkerManager from "../Markers";
 import { hideParentOnClick } from "../../misc/utility";
 import * as APIMiddleware from "../../misc/APIMiddleware";
@@ -8,8 +8,11 @@ import "../../../node_modules/mapbox-gl/dist/mapbox-gl.css";
 import "./Map.scss";
 import "../../glitchytext.scss";
 import { useReactOidc } from "@axa-fr/react-oidc-context";
+import { Beacon } from "../types";
 
 const MARKER_UPDATE_INTERAL_MS = 10000;
+
+const BEACON_TIMEOUT_MINS = 5;
 
 const STARTING_COORDINATES = [43.0847976948913, -77.67630082876184];
 const STARTING_PITCH = 45;
@@ -122,7 +125,26 @@ export const Map: React.FunctionComponent = () => {
       _setMarkerDisplayState("Failed");
       console.error(error);
     }, true);
+    // Exclude beacons older than specified BEACON_TIMEOUT_MS
     if (beacons) {
+      if (!DEVELOPER_MODE) {
+        let unexpiredBeacons: Beacon[] = [];
+        beacons.forEach((beacon_obj: Beacon) => {
+          const beacon_id = Object.keys(beacon_obj)[0];
+          const esps = beacon_obj[beacon_id].esps;
+          const unexpiredEspsKeys = Object.keys(esps).filter((espKey) => {
+            return (
+              Math.round(new Date().getTime() / 1000) - esps[espKey].timestamp <
+              BEACON_TIMEOUT_MINS * 60
+            );
+          });
+          // If any unexpired esps, add to unexpired beacons
+          if (unexpiredEspsKeys.length > 0) {
+            unexpiredBeacons.push(beacon_obj);
+          }
+        });
+        beacons = unexpiredBeacons;
+      }
       markerManager.updateHackerLocations(beacons);
       // Update map with any new markers in markerManager._geojson
       markerManager.updateMarkers();
