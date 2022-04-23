@@ -1,11 +1,7 @@
-@import '../../variables';
-#status-indicator-container {
-  bottom: $gui-overlay-margin;
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  right: $gui-overlay-margin;
-}
+@import '../../generic';
+
+$csh-booth-background-color: #E11C52;
+$hacker-beacon-background-color: #00ff00;
 
 .status-indicator {
   background-color: #000;
@@ -21,10 +17,58 @@
   z-index: 4;
 }
 
-// #loading-markers-indicator {}
+#status-indicator-container {
+  bottom: $gui-overlay-margin;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  right: $gui-overlay-margin;
+}
 
+// #loading-markers-indicator {}
 #loading-markers-indicator.failed {
   background-color: #8b0000;
 }
 
-// #user-type-indicator {}
+#legend-indicator-container {
+  width: auto;
+  height: auto;
+  z-index: 9;
+  background-color: black;
+  color: white;
+}
+
+#legend-indicator-header {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+#legend-indicator-container hr {
+  border-color: white;
+}
+
+#legend-indicator-container .swatch-colorbox {
+  width: 50px;
+  height: 50px;
+  border: 1px solid #ffffff;
+}
+
+.swatch-container {
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
+}
+
+.swatch-container p {
+  width: 100%;
+  margin: auto 0;
+  text-align: left;
+}
+
+.swatch-colorbox#csh-booth {
+  background-color: $csh-booth-background-color;
+}
+
+.swatch-colorbox#hacker-beacon {
+  background-color: $hacker-beacon-background-color;
+}

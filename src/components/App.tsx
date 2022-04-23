@@ -14,6 +14,7 @@ export class App extends Component {
       <Router>
         <PageContainer>
           <Switch>
+            <Redirect path="/contact" to="https://csh.rit.edu/" />
             <Route path="/about" component={About} />
             <Route path="/" component={Home} />
             <Route render={() => <Redirect to="/" />} />

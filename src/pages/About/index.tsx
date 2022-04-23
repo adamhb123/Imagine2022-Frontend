@@ -1,11 +1,10 @@
 import React from "react";
-import { Container } from "reactstrap";
 import "./About.scss";
 
 export const About: React.FunctionComponent = () => (
   <div id="about-page-container">
     <h1>About</h1>
-    <hr />
+    <hr className="header-underline" />
     <p>
       CSH has been hacked and we need your help to track down the hackers! They
       broke into our server room in the Nathaniel Rochester dorm hall, stole

@@ -1,20 +1,19 @@
-$paragraphFontSize: 1.6rem;
-$headerFontSize: 2.3rem;
-#about-page-container {
-  padding: 40px 90px;
-}
+@import "../../generic";
+$paragraph-font-size: 1.6rem;
+$header-font-size: 2.3rem;
+$about-page-padding: 40px 90px;
 
+#about-page-container {
+  padding: $about-page-padding;
+}
+s
 #about-page-container h1 {
-  font-size: $headerFontSize;
+  font-size: $header-font-size;
   font-weight: bold;
   margin: 0 15px 0 0;
 }
 
 #about-page-container p {
-  font-size: $paragraphFontSize;
+  font-size: $paragraph-font-size;
 }
 
-#about-page-container hr {
-  color: black;
-  margin: 5px 0 15px 0;
-}
