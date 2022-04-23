@@ -17,6 +17,7 @@ export const DEVELOPER_MODE = _parseEnvVar(
   "REACT_APP_DEVELOPER_MODE_OKD",
   "REACT_APP_DEVELOPER_MODE"
 );
+
 export const MAPBOX_TOKEN = _parseEnvVar(
   "you-really-need-a-mapbox-token",
   "REACT_APP_MAPBOX_TOKEN_OKD",

@@ -1,0 +1,20 @@
+$paragraphFontSize: 1.6rem;
+$headerFontSize: 2.3rem;
+#about-page-container {
+  padding: 40px 90px;
+}
+
+#about-page-container h1 {
+  font-size: $headerFontSize;
+  font-weight: bold;
+  margin: 0 15px 0 0;
+}
+
+#about-page-container p {
+  font-size: $paragraphFontSize;
+}
+
+#about-page-container hr {
+  color: black;
+  margin: 5px 0 15px 0;
+}

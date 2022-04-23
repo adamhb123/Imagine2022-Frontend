@@ -7,9 +7,15 @@ import "../../../node_modules/mapbox-gl/dist/mapbox-gl.css";
 import "./Markers.scss";
 
 const BEACON_MARKER_FILL_COLOR = "#00ff00";
-const BEACON_MARKER_FILL_OPACITY = 0.6;
-
+const BEACON_MARKER_FILL_OPACITY = 0.65;
+const BEACON_MARKER_HEIGHT = 25;
 const BEACON_MARKER_RADIUS_KM = 0.01;
+
+const FIRESIDE_MARKER_FILL_COLOR = "#FF0000";
+const FIRESIDE_MARKER_FILL_OPACITY = 0.6;
+const FIRESIDE_CENTER_COORDINATES = [-77.6737632693158, 43.084147690138536];
+const FIRESIDE_MARKER_HEIGHT = 100000;
+const FIRESIDE_MARKER_RADIUS_KM = 0.0025;
 
 const BEACON_GEN_RANDOMNESS_MAGNITUDE = 0.003;
 
@@ -74,11 +80,47 @@ class MarkerManager {
           // Get the `fill-extrusion-color` from the source `color` property.
           "fill-extrusion-color": BEACON_MARKER_FILL_COLOR,
           // Get `fill-extrusion-height` from the source `height` property.
-          "fill-extrusion-height": 10,
+          "fill-extrusion-height": BEACON_MARKER_HEIGHT,
           // Get `fill-extrusion-base` from the source `base_height` property.
           "fill-extrusion-base": 0,
           // Make extrusions slightly opaque to see through indoor walls.
           "fill-extrusion-opacity": BEACON_MARKER_FILL_OPACITY,
+        },
+      });
+
+      // Fireside Lounge marker
+      this._map.current.addSource("fireside", {
+        type: "geojson",
+        data: {
+          type: "Feature",
+          geometry: {
+            type: "Polygon",
+            coordinates: [
+              this._generateGeoJSONCircleCoordinates(
+                FIRESIDE_MARKER_RADIUS_KM,
+                FIRESIDE_CENTER_COORDINATES
+              ),
+            ],
+          },
+          properties: {
+            center: FIRESIDE_CENTER_COORDINATES,
+          },
+        },
+      });
+      this._map.current.addLayer({
+        id: "fireside",
+        type: "fill-extrusion",
+        source: "fireside", // reference the data source
+        layout: {},
+        paint: {
+          // Get the `fill-extrusion-color` from the source `color` property.
+          "fill-extrusion-color": FIRESIDE_MARKER_FILL_COLOR,
+          // Get `fill-extrusion-height` from the source `height` property.
+          "fill-extrusion-height": FIRESIDE_MARKER_HEIGHT,
+          // Get `fill-extrusion-base` from the source `base_height` property.
+          "fill-extrusion-base": 0,
+          // Make extrusions slightly opaque to see through indoor walls.
+          "fill-extrusion-opacity": FIRESIDE_MARKER_FILL_OPACITY,
         },
       });
       /*this._map.current?.addLayer({
