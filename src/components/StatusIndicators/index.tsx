@@ -32,7 +32,7 @@ export const LegendInformationIndicator = () => (
   <div id="legend-indicator-container" className="status-indicator">
     <p id="legend-indicator-header">Legend:</p>
     <hr className="header-underline" />
-    <div id="hacker-beacon" className="swatch-container">
+    <div className="swatch-container">
       <p>Hacker Beacon</p>
       <span id="hacker-beacon" className="swatch-colorbox"></span>
     </div>
