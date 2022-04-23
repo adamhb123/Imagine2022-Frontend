@@ -45,7 +45,6 @@ export const LegendInformationIndicator = () => (
 
 export const StatusIndicators = () => (
   <div id="status-indicator-container">
-    <LegendInformationIndicator></LegendInformationIndicator>
     <LoadingMarkersIndicator></LoadingMarkersIndicator>
     <UserTypeIndicator></UserTypeIndicator>
   </div>
