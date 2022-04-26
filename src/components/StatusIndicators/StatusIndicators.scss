@@ -2,32 +2,40 @@
 
 $csh-booth-background-color: #E11C52;
 $hacker-beacon-background-color: #00ff00;
+$status-indicator-container-padding: 50px;
+
+#status-indicator-container {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  margin: $gui-overlay-margin;
+  bottom: 0;
+  right: 0;
+}
 
 .status-indicator {
+  width: auto;
+  height: auto;
+  padding: 10px;
+  margin: $gui-overlay-margin;
   background-color: #000;
   color: #fff;
   filter: drop-shadow(0 1px 3px);
   font-size: 1.2rem;
-  height: auto;
   letter-spacing: 5px;
-  margin: $gui-overlay-margin;
-  padding: 10px;
-  width: auto;
+  
   /* Bright things in dark environments usually cast that light, giving off a glow */
   z-index: 4;
-}
-
-#status-indicator-container {
-  bottom: $gui-overlay-margin;
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  right: $gui-overlay-margin;
 }
 
 // #loading-markers-indicator {}
 #loading-markers-indicator.failed {
   background-color: #8b0000;
+}
+
+button#legend-indicator-toggler {
+  width: 50px;
+  height: 50px;
 }
 
 #legend-indicator-container {
@@ -39,6 +47,7 @@ $hacker-beacon-background-color: #00ff00;
 }
 
 #legend-indicator-header {
+  font-weight: bold;
   font-size: 1.25rem;
   margin: 0;
 }

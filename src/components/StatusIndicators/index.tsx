@@ -47,6 +47,7 @@ export const StatusIndicators = () => (
   <div id="status-indicator-container">
     <LoadingMarkersIndicator></LoadingMarkersIndicator>
     <UserTypeIndicator></UserTypeIndicator>
+    <LegendInformationIndicator></LegendInformationIndicator>
   </div>
 );
 

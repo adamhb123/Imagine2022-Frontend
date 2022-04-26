@@ -78,6 +78,33 @@ class AdminPanelToggler {
     this._map = undefined;
   }
 }
+class LegendToggler {
+  _map: mapboxgl.Map | undefined;
+  _container: HTMLDivElement | undefined;
+
+  onAdd(map: mapboxgl.Map) {
+    this._map = map;
+    this._container = document.createElement("div");
+    this._container.classList.add("mapboxgl-ctrl", "mapboxgl-ctrl-group");
+    let _adminPanel = document.getElementById("admin-panel");
+    let _button = document.createElement("button");
+    _button.id = "admin-panel-toggle";
+    _button.textContent = "Admin Panel";
+    if (_adminPanel)
+      _button.addEventListener(
+        "click",
+        hideParentOnClick.bind(null, _adminPanel)
+      );
+    this._container.appendChild(_button);
+    return this._container;
+  }
+
+  onRemove() {
+    this._container?.parentNode?.removeChild(this._container);
+    this._map = undefined;
+  }
+}
+
 export const Map: React.FunctionComponent = () => {
   const mapContainer: React.RefObject<HTMLDivElement> = createRef();
   const map = useRef<mapboxgl.Map>();
@@ -92,8 +119,9 @@ export const Map: React.FunctionComponent = () => {
   function _setupControls() {
     if (_oidcUser) {
       map.current?.addControl(new AdminPanelToggler(), "top-left");
-      map.current?.addControl(new DeveloperModeDisplay(), "top-left");
+      //map.current?.addControl(new DeveloperModeDisplay(), "top-left");
     }
+    map.current?.addControl(new LegendToggler());
     map.current?.addControl(new mapboxgl.NavigationControl());
     map.current?.addControl(new mapboxgl.FullscreenControl());
   }
@@ -132,12 +160,12 @@ export const Map: React.FunctionComponent = () => {
         beacons.forEach((beacon_obj: Beacon) => {
           const beacon_id = Object.keys(beacon_obj)[0];
           const esps = beacon_obj[beacon_id].esps;
-          const unexpiredEspsKeys = Object.keys(esps).filter((espKey) => {
-            return (
+          const unexpiredEspsKeys = Object.keys(esps).filter(
+            (espKey) =>
+              // In seconds:
               Math.round(new Date().getTime() / 1000) - esps[espKey].timestamp <
               BEACON_TIMEOUT_MINS * 60
-            );
-          });
+          );
           // If any unexpired esps, add to unexpired beacons
           if (unexpiredEspsKeys.length > 0) {
             unexpiredBeacons.push(beacon_obj);
