@@ -8,17 +8,17 @@ import {
 import { buildPath } from "../misc/utility";
 import MarkerManager from "../components/Markers";
 import { MAX_BOUNDS } from "../components/Map";
-import { Beacon } from "../components/types";
+import { BeaconJSON } from "../components/types";
 
 const FETCH_BEACON_DATA_TIMEOUT_MS = 7000;
+const TEST_DATA_SECTION_COUNT = 2;
 
-const TEST_DATA_SECTION_COUNT = 10;
-let testData: Beacon[];
+let visibleTestData: BeaconJSON[];
+let hiddenTestData: BeaconJSON[];
 
-const _flipArray = <T>(input: [T, T]): [T, T] => [input[1], input[0]];
-
-function _beaconJsonToList(json: any): Beacon[] {
-  let list: Beacon[] = [];
+function _beaconJsonToArray(json: any): BeaconJSON[] {
+  const _flipArray = <T>(input: [T, T]): [T, T] => [input[1], input[0]];
+  let list: BeaconJSON[] = [];
   Object.keys(json).forEach((key) => {
     const obj: any = {};
     json[key].absolute_position = _flipArray(json[key].absolute_position);
@@ -30,7 +30,7 @@ function _beaconJsonToList(json: any): Beacon[] {
 }
 
 export function initialize() {
-  testData = MarkerManager.generateFakeBeaconLocationData(
+  visibleTestData = MarkerManager.generateFakeBeaconLocationData(
     MAX_BOUNDS,
     TEST_DATA_SECTION_COUNT
   );
@@ -39,15 +39,15 @@ export function initialize() {
 export async function retrieveBeacons(
   failureCallback?: Function,
   provideError: boolean = false
-): Promise<Beacon[] | void> {
+): Promise<BeaconJSON[] | void> {
   return DEVELOPER_MODE
-    ? testData
+    ? visibleTestData
     : await axios({
         method: "get",
         url: buildPath(API_BACKEND_URL, API_ENDPOINTS.BEACON_LOCATIONS),
         timeout: FETCH_BEACON_DATA_TIMEOUT_MS,
       })
-        .then((response: any) => _beaconJsonToList(response.data))
+        .then((response: any) => _beaconJsonToArray(response.data))
         .catch((error: any) => {
           provideError
             ? failureCallback?.call(null, error)
@@ -55,20 +55,30 @@ export async function retrieveBeacons(
         });
 }
 
-export async function setBeaconHidden(id: string, hidden: boolean) {
-  return await axios({
-    method: "post",
-    url: buildPath(
-      API_BACKEND_URL,
-      hidden ? API_ENDPOINTS.HIDE_MARKER : API_ENDPOINTS.UNHIDE_MARKER
-    ),
-    headers: {
-      token: API_BACKEND_TOKEN,
-    },
-    data: {
-      id: id,
-    },
-  });
+export async function transmitBeaconHidden(beacon_id: string, hidden: boolean) {
+  if (!DEVELOPER_MODE) {
+    return await axios({
+      method: "post",
+      url: buildPath(
+        API_BACKEND_URL,
+        hidden ? API_ENDPOINTS.HIDE_MARKER : API_ENDPOINTS.UNHIDE_MARKER
+      ),
+      headers: {
+        Authorization: `Bearer ${API_BACKEND_TOKEN}`,
+      },
+      params: {
+        id: beacon_id,
+      },
+    });
+  } else {
+    let targetBeaconJSON = visibleTestData.filter(
+      (e: BeaconJSON) => beacon_id === e[Object.keys(e)[0]].beacon_id
+    )[0]; // Should be guaranteed unique
+    hiddenTestData.push(targetBeaconJSON);
+    visibleTestData = visibleTestData.filter(
+      (e: BeaconJSON) => beacon_id !== e[Object.keys(e)[0]].beacon_id
+    ); // I haven't slept in 2 days...
+  }
 }
 
 async function main() {

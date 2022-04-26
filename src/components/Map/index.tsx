@@ -1,6 +1,6 @@
 import React, { useRef, useState, useLayoutEffect, createRef } from "react";
-import mapboxgl from "mapbox-gl";
-import { MAPBOX_TOKEN } from "../../misc/config";
+import mapboxgl, { Marker } from "mapbox-gl";
+import { DEVELOPER_MODE, MAPBOX_TOKEN } from "../../misc/config";
 import MarkerManager from "../Markers";
 import { hideParentOnClick } from "../../misc/utility";
 import * as APIMiddleware from "../../misc/APIMiddleware";
@@ -8,6 +8,7 @@ import "../../../node_modules/mapbox-gl/dist/mapbox-gl.css";
 import "./Map.scss";
 import "../../glitchytext.scss";
 import { useReactOidc } from "@axa-fr/react-oidc-context";
+import { Beacon } from "../types";
 
 const MARKER_UPDATE_INTERAL_MS = 10000;
 
@@ -75,11 +76,14 @@ class AdminPanelToggler {
     this._map = undefined;
   }
 }
+
 export const Map: React.FunctionComponent = () => {
   const mapContainer: React.RefObject<HTMLDivElement> = createRef();
   const map = useRef<mapboxgl.Map>();
   const markerManager = new MarkerManager(map);
   let _updateInterval: ReturnType<typeof setInterval>;
+  let currentUserCoordinates = { latitude: -1, longitude: -1 };
+  const navigatorAvailable = "geolocation" in navigator ? true : false;
   const [_loadingMarkers, setLoadingMarkers] = useState(false);
   const _oidcUser = useReactOidc().oidcUser;
   const [_lat, setLat] = useState(STARTING_COORDINATES[0]);
@@ -118,11 +122,12 @@ export const Map: React.FunctionComponent = () => {
   async function _updateBeaconMarkers() {
     setLoadingMarkers(true);
     _setMarkerDisplayState("Updating");
-    let beacons = await APIMiddleware.retrieveBeacons((error: any) => {
+    let beaconJSONs = await APIMiddleware.retrieveBeacons((error: any) => {
       _setMarkerDisplayState("Failed");
       console.error(error);
     }, true);
-    if (beacons) {
+    if (beaconJSONs) {
+      const beacons = Beacon.parseBeaconJSONArray(beaconJSONs);
       markerManager.updateHackerLocations(beacons);
       // Update map with any new markers in markerManager._geojson
       markerManager.updateMarkers();
@@ -133,7 +138,7 @@ export const Map: React.FunctionComponent = () => {
     setLoadingMarkers(false);
   }
 
-  function _setupUpdateInterval() {
+  function _setupMarkerUpdateInterval() {
     return setInterval(() => {
       // (if not still loading)
       // Update markerManager._geojson with beacon locations
@@ -147,6 +152,13 @@ export const Map: React.FunctionComponent = () => {
   function _cleanup() {
     map.current = undefined;
     clearInterval(_updateInterval);
+  }
+
+  function _startUserPositionWatch() {
+    navigator.geolocation.watchPosition((position) => {
+      currentUserCoordinates.latitude = position.coords.latitude;
+      currentUserCoordinates.longitude = position.coords.longitude;
+    });
   }
 
   useLayoutEffect(() => {
@@ -225,7 +237,7 @@ export const Map: React.FunctionComponent = () => {
             });
           markerManager.updateMarkers();
           _setupControls();
-          _updateInterval = _setupUpdateInterval();
+          _updateInterval = _setupMarkerUpdateInterval();
           map.current?.resize();
           // Perform page-switch cleanup operations
           [].slice
@@ -238,17 +250,64 @@ export const Map: React.FunctionComponent = () => {
     }
   });
 
+  // Setup navigator GPS location
+  useLayoutEffect(() => {});
+
   useLayoutEffect(() => {
-    map.current?.on("move", () => {
-      if (typeof map.current !== "undefined") {
-        setLng(+map.current.getCenter().lng.toFixed(4));
-        setLat(+map.current.getCenter().lat.toFixed(4));
-        setZoom(+map.current.getZoom().toFixed(2));
+    if (map.current) {
+      if (navigatorAvailable) {
+        _startUserPositionWatch();
       }
-    });
+      /*
+      Admin shit no worky right now, have to abort due to time constraints
+
+      map.current.on("click", "visible-beacons", (e) => {
+        console.log("visible");
+        if (e.features) {
+          const feature = e.features[0];
+          //markerManager.setMarkerVisible(feature.properties?.id, false); No
+          if (!DEVELOPER_MODE) {
+            APIMiddleware.transmitBeaconHidden(
+              feature.properties?.id,
+              true
+            ).catch((err) => {
+              console.error(`Failed to hide beacon: ${feature.properties?.id}`);
+              console.error(err);
+            });
+          }
+        }
+      });
+      map.current.on("click", "hidden-beacons", (e) => {
+        console.log("hidden");
+        if (e.features) {
+          console.log(e.features);
+          const feature = e.features[0];
+          console.log(feature.properties?.id);
+          if (!DEVELOPER_MODE) {
+            APIMiddleware.transmitBeaconHidden(
+              feature.properties?.id,
+              false
+            ).catch((err) => {
+              console.error(
+                `Failed to unhide beacon: ${feature.properties?.id}`
+              );
+              console.error(err);
+            });
+          }
+        }
+      });*/
+
+      map.current.on("move", () => {
+        if (typeof map.current !== "undefined") {
+          setLng(+map.current.getCenter().lng.toFixed(4));
+          setLat(+map.current.getCenter().lat.toFixed(4));
+          setZoom(+map.current.getZoom().toFixed(2));
+        }
+      });
+    }
   });
 
-  useLayoutEffect(() => {}, [_loadingMarkers]);
+  //useLayoutEffect(() => {}, [_loadingMarkers]);
 
   return <div ref={mapContainer} className="map-container"></div>;
 };
