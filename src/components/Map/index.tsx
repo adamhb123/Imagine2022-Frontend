@@ -8,11 +8,13 @@ import "../../../node_modules/mapbox-gl/dist/mapbox-gl.css";
 import "./Map.scss";
 import "../../glitchytext.scss";
 import { useReactOidc } from "@axa-fr/react-oidc-context";
-import { Beacon } from "../types";
+import { Beacon, Esp } from "../types";
 
-const MARKER_UPDATE_INTERAL_MS = 10000;
+const MARKER_UPDATE_INTERVAL_MS = 10000;
 
-const STARTING_COORDINATES = [43.0847976948913, -77.67630082876184];
+const BEACON_TIMEOUT_MINS = 5;
+
+const STARTING_COORDINATES = [43.08383425657111, -77.67397784602626];
 const STARTING_PITCH = 45;
 const STARTING_BEARING = -17.6;
 const STARTING_ZOOM = 19;
@@ -41,7 +43,11 @@ class DeveloperModeDisplay {
     this._container = document.createElement("div");
     this._messagebox = document.createElement("div");
     this._messagebox.id = "developer-mode-display";
-    this._container.classList.add("mapboxgl-ctrl", "mapboxgl-ctrl-group");
+    this._container.classList.add(
+      "mapboxgl-ctrl",
+      "mapboxgl-ctrl-group",
+      "status-indicator"
+    );
     _setStatusIndicatorText(this._messagebox, "Developer Mode");
     return this._container;
   }
@@ -50,6 +56,7 @@ class DeveloperModeDisplay {
     this._map = undefined;
   }
 }
+
 class AdminPanelToggler {
   _map: mapboxgl.Map | undefined;
   _container: HTMLDivElement | undefined;
@@ -126,16 +133,34 @@ export const Map: React.FunctionComponent = () => {
       _setMarkerDisplayState("Failed");
       console.error(error);
     }, true);
+    let beacons: Beacon[];
+    // Exclude beacons older than specified BEACON_TIMEOUT_MS
     if (beaconJSONs) {
-      const beacons = Beacon.parseBeaconJSONArray(beaconJSONs);
-      markerManager.updateHackerLocations(beacons);
-      // Update map with any new markers in markerManager._geojson
-      markerManager.updateMarkers();
-      _setMarkerDisplayState("Success");
-    } else {
-      _setMarkerDisplayState("Failed");
+      if (!DEVELOPER_MODE) {
+        let unexpiredBeacons: Beacon[] = [];
+        Beacon.fromJSONArray(beaconJSONs).forEach((beacon: Beacon) => {
+          if (beacon.esps) {
+            const unexpiredESPs = beacon.esps.filter(
+              (esp) =>
+                Math.round(new Date().getTime() / 1000) - esp.timestamp <
+                BEACON_TIMEOUT_MINS * 60
+            );
+            // If any unexpired esps, add to unexpired beacons
+            if (unexpiredESPs.length > 0) {
+              unexpiredBeacons.push(beacon);
+            }
+          }
+        });
+        const beacons = Beacon.fromJSONArray(beaconJSONs);
+        markerManager.updateHackerLocations(beacons);
+        // Update map with any new markers in markerManager._geojson
+        markerManager.updateMarkers();
+        _setMarkerDisplayState("Success");
+      } else {
+        _setMarkerDisplayState("Failed");
+      }
+      setLoadingMarkers(false);
     }
-    setLoadingMarkers(false);
   }
 
   function _setupMarkerUpdateInterval() {
@@ -146,7 +171,7 @@ export const Map: React.FunctionComponent = () => {
       if (!_loadingMarkers) {
         _updateBeaconMarkers();
       }
-    }, MARKER_UPDATE_INTERAL_MS);
+    }, MARKER_UPDATE_INTERVAL_MS);
   }
 
   function _cleanup() {
@@ -258,9 +283,6 @@ export const Map: React.FunctionComponent = () => {
       if (navigatorAvailable) {
         _startUserPositionWatch();
       }
-      /*
-      Admin shit no worky right now, have to abort due to time constraints
-
       map.current.on("click", "visible-beacons", (e) => {
         console.log("visible");
         if (e.features) {
@@ -295,7 +317,7 @@ export const Map: React.FunctionComponent = () => {
             });
           }
         }
-      });*/
+      });
 
       map.current.on("move", () => {
         if (typeof map.current !== "undefined") {

@@ -8,7 +8,6 @@ import {
   MarkerFeatureIdentifier,
   MarkerGeojsonIdentifier,
   BeaconJSON,
-  MarkerFeatureQuery,
   instanceOfMarkerFeatureQuery,
   MarkerFeatureQueryResult,
 } from "../types";
@@ -16,12 +15,17 @@ import { v4 as uuidv4 } from "uuid";
 
 import "../../../node_modules/mapbox-gl/dist/mapbox-gl.css";
 import "./Markers.scss";
-import { Exception } from "sass";
 
 const BEACON_MARKER_DEFAULT_FILL_COLOR = "#00ff00";
 const BEACON_MARKER_HIDDEN_FILL_COLOR = "#000000";
 const BEACON_MARKER_DEFAULT_FILL_OPACITY = 0.6;
 const BEACON_MARKER_HIDDEN_FILL_OPACITY = 0.5;
+
+export const FIRESIDE_MARKER_FILL_COLOR = "#E11C52";
+const FIRESIDE_MARKER_FILL_OPACITY = 0.75;
+const FIRESIDE_CENTER_COORDINATES = [-77.6737632693158, 43.084147690138536];
+const FIRESIDE_MARKER_HEIGHT = 100000;
+const FIRESIDE_MARKER_RADIUS_KM = 0.0025;
 
 const BEACON_MARKER_RADIUS_KM = 0.02;
 const BEACON_MARKER_HEIGHT = 15;
@@ -157,6 +161,26 @@ class MarkerManager {
           "fill-extrusion-opacity": BEACON_MARKER_HIDDEN_FILL_OPACITY,
         },
       });
+      // Fireside Lounge marker
+      this._map.current.addSource("fireside", {
+        type: "geojson",
+        data: {
+          type: "Feature",
+          geometry: {
+            type: "Polygon",
+            coordinates: [
+              MarkerManager.generateGeoJSONCircleCoordinates(
+                FIRESIDE_CENTER_COORDINATES,
+                FIRESIDE_MARKER_RADIUS_KM
+              ),
+            ],
+          },
+          properties: {
+            center: FIRESIDE_CENTER_COORDINATES,
+          },
+        },
+      });
+
       /*
       Base outline
       this._map.current?.addLayer({

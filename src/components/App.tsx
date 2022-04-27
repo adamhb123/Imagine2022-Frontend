@@ -5,7 +5,7 @@ import {
   Redirect,
   BrowserRouter as Router,
 } from "react-router-dom";
-import { Home, About, Contact } from "./index";
+import { Home, About } from "./index";
 import PageContainer from "../containers/PageContainer";
 
 export class App extends Component {
@@ -15,7 +15,7 @@ export class App extends Component {
         <PageContainer>
           <Switch>
             <Route path="/about" component={About} />
-            <Route path="/contact" component={Contact} />
+            <Redirect path="/contact" to="https://csh.rit.edu/" />
             <Route path="/" component={Home} />
             <Route render={() => <Redirect to="/" />} />
           </Switch>

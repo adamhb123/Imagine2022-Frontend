@@ -35,6 +35,9 @@ $popup-border: 3px #000 solid;
 $popup-border-radius: 10px;
 
 // GUI Overlay
-$gui-overlay-margin: 10px;
-$gui-overlay-custom-control-width: 180px;
-$gui-overlay-custom-control-height: 35px;
+$gui-margin: 10px;
+$gui-custom-control-width: 180px;
+$gui-custom-control-height: 35px;
+$gui-status-indicator-z-index: 4;
+$gui-interactable-z-index: 9; // Interactables should be above all (except Navbar)
+$gui-navbar-z-index: 10; // Interactables should be above all

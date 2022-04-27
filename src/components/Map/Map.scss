@@ -37,10 +37,10 @@
   border-radius: inherit;
   color: $hacker-green;
   font-size: 1.1rem;
-  height: $gui-overlay-custom-control-height;
+  height: $gui-custom-control-height;
   line-height: 12px;
-  margin: $gui-overlay-margin;
+  margin: $gui-margin;
   text-align: center;
-  width: $gui-overlay-custom-control-width;
-  z-index: 5;
+  width: $gui-custom-control-width;
+  z-index: $gui-status-indicator-z-index;
 }

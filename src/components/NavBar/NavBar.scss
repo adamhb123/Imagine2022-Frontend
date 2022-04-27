@@ -5,7 +5,7 @@
   // No choice but to use !important here, as the csh css uses it as well
   padding: $navbar-padding;
   position: relative;
-  z-index: 10;
+  z-index: $gui-navbar-z-index;
 }
 
 

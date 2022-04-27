@@ -16,7 +16,7 @@ $button-text-color-hover: darken($hacker-green, 10%);
   bottom: 0;
   color: $hacker-green;
   height: 25vh;
-  margin: $gui-overlay-margin;
+  margin: $gui-margin;
   min-height: 225px;
   min-width: 300px;
   padding: 15px;
@@ -24,7 +24,7 @@ $button-text-color-hover: darken($hacker-green, 10%);
   right: 0;
   visibility: none;
   width: 40vw;
-  z-index: 5;
+  z-index: $gui-interactable-z-index;
 }
 
 #admin-panel hr {
@@ -50,7 +50,7 @@ $button-text-color-hover: darken($hacker-green, 10%);
   height: 35px;
   line-height: 12px;
   width: 180px;
-  z-index: 5;
+  z-index: $gui-interactable-z-index;
 }
 
 #admin-panel button#close-button {
