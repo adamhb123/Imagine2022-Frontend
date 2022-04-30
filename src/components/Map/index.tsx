@@ -8,7 +8,7 @@ import "../../../node_modules/mapbox-gl/dist/mapbox-gl.css";
 import "./Map.scss";
 import "../../glitchytext.scss";
 import { useReactOidc } from "@axa-fr/react-oidc-context";
-import { Beacon, Esp } from "../types";
+import { Beacon, Esp, MarkerDisplayState } from "../types";
 
 const MARKER_UPDATE_INTERVAL_MS = 10000;
 
@@ -33,29 +33,29 @@ const _setStatusIndicatorText = (element: HTMLElement, text: string) => {
 
 mapboxgl.accessToken = MAPBOX_TOKEN as string;
 
-class DeveloperModeDisplay {
-  _map: mapboxgl.Map | undefined;
-  _container: HTMLDivElement | undefined;
-  _messagebox: HTMLDivElement | undefined;
+// class DeveloperModeDisplay {
+//   _map: mapboxgl.Map | undefined;
+//   _container: HTMLDivElement | undefined;
+//   _messagebox: HTMLDivElement | undefined;
 
-  onAdd(map: mapboxgl.Map) {
-    this._map = map;
-    this._container = document.createElement("div");
-    this._messagebox = document.createElement("div");
-    this._messagebox.id = "developer-mode-display";
-    this._container.classList.add(
-      "mapboxgl-ctrl",
-      "mapboxgl-ctrl-group",
-      "status-indicator"
-    );
-    _setStatusIndicatorText(this._messagebox, "Developer Mode");
-    return this._container;
-  }
-  onRemove() {
-    this._container?.parentNode?.removeChild(this._container);
-    this._map = undefined;
-  }
-}
+//   onAdd(map: mapboxgl.Map) {
+//     this._map = map;
+//     this._container = document.createElement("div");
+//     this._messagebox = document.createElement("div");
+//     this._messagebox.id = "developer-mode-display";
+//     this._container.classList.add(
+//       "mapboxgl-ctrl",
+//       "mapboxgl-ctrl-group",
+//       "status-indicator"
+//     );
+//     _setStatusIndicatorText(this._messagebox, "Developer Mode");
+//     return this._container;
+//   }
+//   onRemove() {
+//     this._container?.parentNode?.removeChild(this._container);
+//     this._map = undefined;
+//   }
+// }
 
 class AdminPanelToggler {
   _map: mapboxgl.Map | undefined;
@@ -98,39 +98,51 @@ export const Map: React.FunctionComponent = () => {
   const [zoom, setZoom] = useState(STARTING_ZOOM);
 
   function _setupControls() {
+    /*
+     * Initializes mapboxgl controls (other controls are defined)
+     */
     if (_oidcUser) {
       map.current?.addControl(new AdminPanelToggler(), "top-left");
-      map.current?.addControl(new DeveloperModeDisplay(), "top-left");
     }
     map.current?.addControl(new mapboxgl.NavigationControl());
     map.current?.addControl(new mapboxgl.FullscreenControl());
   }
 
-  function _setMarkerDisplayState(state: "Updating" | "Success" | "Failed") {
+  function setMarkerDisplayState(state: MarkerDisplayState) {
     const messageBox = document.getElementById("loading-markers-indicator");
-    if (state === "Success") {
-      if (messageBox) messageBox.style.visibility = "hidden";
-      else _setMarkerDisplayState("Success");
-      return;
-    }
     if (messageBox) {
+      // "Reset" display state
       messageBox.style.visibility = "visible";
-      if (state === "Updating") {
-        messageBox.classList.remove("failed");
+      messageBox.classList.remove("failed", "warning");
+      // Success state
+      if (state === MarkerDisplayState.Success) {
+        messageBox.style.visibility = "hidden";
+      }
+      // Updating state
+      else if (state === MarkerDisplayState.Updating) {
         _setStatusIndicatorText(messageBox, "Updating markers...");
-      } else if (state === "Failed") {
+      }
+      // Failed state
+      else if (state === MarkerDisplayState.Failed) {
         messageBox.classList.add("failed");
         _setStatusIndicatorText(messageBox, "Marker Update Failed!");
         console.error("Marker update timed out...retrying");
       }
+      // NoBeacons state
+      else if (state === MarkerDisplayState.NoBeacons) {
+        messageBox.classList.add("warning");
+      }
+    } else {
+      // If the messageBox is unavailable, set to Updating state
+      setMarkerDisplayState(MarkerDisplayState.Updating);
     }
   }
 
   async function _updateBeaconMarkers() {
     setLoadingMarkers(true);
-    _setMarkerDisplayState("Updating");
+    setMarkerDisplayState(MarkerDisplayState.Updating);
     let beaconJSONs = await APIMiddleware.retrieveBeacons((error: any) => {
-      _setMarkerDisplayState("Failed");
+      setMarkerDisplayState(MarkerDisplayState.Failed);
       console.error(error);
     }, true);
     let beacons: Beacon[];
@@ -151,13 +163,19 @@ export const Map: React.FunctionComponent = () => {
             }
           }
         });
-        const beacons = Beacon.fromJSONArray(beaconJSONs);
+        beacons = Beacon.fromJSONArray(beaconJSONs);
+      } else {
+        beacons = Beacon.fromJSONArray(
+          MarkerManager.generateFakeBeaconLocationData(MAX_BOUNDS, 25)
+        );
+      }
+      if (beacons.length) {
         markerManager.updateHackerLocations(beacons);
         // Update map with any new markers in markerManager._geojson
         markerManager.updateMarkers();
-        _setMarkerDisplayState("Success");
+        setMarkerDisplayState(MarkerDisplayState.Success);
       } else {
-        _setMarkerDisplayState("Failed");
+        setMarkerDisplayState(MarkerDisplayState.NoBeacons);
       }
       setLoadingMarkers(false);
     }

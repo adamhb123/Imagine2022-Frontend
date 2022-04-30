@@ -12,12 +12,12 @@ const _parseEnvVar = (failureDefault: any, ...envVarNames: string[]) => {
 };
 
 // ..._OKD envvars used if run on OKD (can't edit .env on OKD)
-export const DEVELOPER_MODE = _parseEnvVar(
+export const DEVELOPER_MODE: boolean = _parseEnvVar(
   false,
   "REACT_APP_DEVELOPER_MODE_OKD",
   "REACT_APP_DEVELOPER_MODE"
 );
-export const MAPBOX_TOKEN = _parseEnvVar(
+export const MAPBOX_TOKEN: string = _parseEnvVar(
   "you-really-need-a-mapbox-token",
   "REACT_APP_MAPBOX_TOKEN_OKD",
   "REACT_APP_MAPBOX_TOKEN"
@@ -28,19 +28,19 @@ export const MAPBOX_TOKEN = _parseEnvVar(
   .REACT_APP_SITE_URL ,
   "http://localhost:3000/";*/
 
-export const API_BACKEND_URL = _parseEnvVar(
+export const API_BACKEND_URL: string = _parseEnvVar(
   "https://imagine-2022-backend-git-flask-imagine2022-backend.apps.okd4.csh.rit.edu/",
   "REACT_APP_API_BACKEND_URL_OKD",
   "REACT_APP_API_BACKEND_URL"
 );
 
-export const API_BACKEND_TOKEN = _parseEnvVar(
+export const API_BACKEND_TOKEN: string = _parseEnvVar(
   "https://imagine-2022-backend-git-flask-imagine2022-backend.apps.okd4.csh.rit.edu/",
   "REACT_APP_API_BACKEND_TOKEN_OKD",
   "REACT_APP_API_BACKEND_TOKEN"
 );
 
-export const API_ENDPOINTS = {
+export const API_ENDPOINTS: Record<string, string> = {
   BEACON_LOCATIONS: _parseEnvVar(
     "/beacons/locations",
     "REACT_APP_API_BEACON_LOCATIONS_URL_OKD",
@@ -59,22 +59,22 @@ export const API_ENDPOINTS = {
 };
 
 // SSO
-const _CLIENT_ID = _parseEnvVar(
+const _CLIENT_ID: string = _parseEnvVar(
   "react-boilerplate",
   "REACT_APP_SSO_CLIENT_ID_OKD",
   "REACT_APP_SSO_CLIENT_ID"
 );
-const _CLIENT_SECRET = _parseEnvVar(
+const _CLIENT_SECRET: string = _parseEnvVar(
   "",
   "REACT_APP_SSO_CLIENT_SECRET_OKD",
   "REACT_APP_SSO_CLIENT_SECRET"
 );
-const _POST_LOGOUT_REDIRECT_URI = _parseEnvVar(
+const _POST_LOGOUT_REDIRECT_URI: string = _parseEnvVar(
   "http://localhost:3000/",
   "REACT_APP_SITE_URL_OKD",
   "REACT_APP_SITE_URL"
 );
-const _AUTHORITY = _parseEnvVar(
+const _AUTHORITY: string = _parseEnvVar(
   "https://sso.csh.rit.edu/auth/realms/csh",
   "REACT_APP_SSO_AUTHORITY_OKD",
   "REACT_APP_SSO_AUTHORITY"

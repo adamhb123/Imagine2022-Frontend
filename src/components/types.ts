@@ -48,6 +48,20 @@ export function instanceOfMarkerFeatureQuery(
 
 export type MarkerFeatureQueryResult = MarkerFeatureQuery | null;
 
+export enum MarkerDisplayState {
+  Success,
+  Updating,
+  NoBeacons,
+  Failed,
+}
+
+export enum AdminPanelModificationMode {
+  HideMarkers,
+  UnhideMarkers,
+  HideAllMarkers,
+  UnhideAllMarkers,
+}
+
 export interface BeaconJSON {
   [key: string]: {
     position: [number, number];
