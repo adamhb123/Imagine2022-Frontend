@@ -1,5 +1,6 @@
 # Imagine2022-Frontend
-Frontend for CSH's Sentinel Security project
+Frontend for CSH's Sentinel Security project.
+
 Occasionally visible @ https://sentinelsecurity.csh.rit.edu
 
 Example:
