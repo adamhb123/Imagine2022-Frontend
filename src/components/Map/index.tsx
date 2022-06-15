@@ -1,14 +1,19 @@
+/* External Modules */
 import React, { useRef, useState, useLayoutEffect, createRef } from "react";
-import mapboxgl, { Marker } from "mapbox-gl";
-import { DEVELOPER_MODE, MAPBOX_TOKEN } from "../../misc/config";
+import { useReactOidc } from "@axa-fr/react-oidc-context";
+import mapboxgl from "mapbox-gl";
+/* Local Modules */
 import MarkerManager from "../Markers";
+import APIMiddleware from "../../misc/APIMiddleware";
+import Logger from "easylogger-ts";
+import { DEVELOPER_MODE, MAPBOX_TOKEN } from "../../misc/config";
 import { hideParentOnClick } from "../../misc/utility";
-import * as APIMiddleware from "../../misc/APIMiddleware";
+import { Beacon, MarkerDisplayState } from "../types";
+/* External CSS */
 import "../../../node_modules/mapbox-gl/dist/mapbox-gl.css";
+/* Local CSS */
 import "./Map.scss";
 import "../../glitchytext.scss";
-import { useReactOidc } from "@axa-fr/react-oidc-context";
-import { Beacon, Esp, MarkerDisplayState } from "../types";
 
 const MARKER_UPDATE_INTERVAL_MS = 10000;
 
@@ -126,7 +131,7 @@ export const Map: React.FunctionComponent = () => {
       else if (state === MarkerDisplayState.Failed) {
         messageBox.classList.add("failed");
         _setStatusIndicatorText(messageBox, "Marker Update Failed!");
-        console.error("Marker update timed out...retrying");
+        Logger.error("Marker update timed out...retrying");
       }
       // NoBeacons state
       else if (state === MarkerDisplayState.NoBeacons) {
@@ -143,7 +148,7 @@ export const Map: React.FunctionComponent = () => {
     setMarkerDisplayState(MarkerDisplayState.Updating);
     let beaconJSONs = await APIMiddleware.retrieveBeacons((error: any) => {
       setMarkerDisplayState(MarkerDisplayState.Failed);
-      console.error(error);
+      Logger.error(error);
     }, true);
     let beacons: Beacon[];
     // Exclude beacons older than specified BEACON_TIMEOUT_MS
@@ -166,7 +171,7 @@ export const Map: React.FunctionComponent = () => {
         beacons = Beacon.fromJSONArray(beaconJSONs);
       } else {
         beacons = Beacon.fromJSONArray(
-          MarkerManager.generateFakeBeaconLocationData(MAX_BOUNDS, 25)
+          MarkerManager.generateFakeBeaconLocationData(MAX_BOUNDS, 5)
         );
       }
       if (beacons.length) {
@@ -302,7 +307,7 @@ export const Map: React.FunctionComponent = () => {
         _startUserPositionWatch();
       }
       map.current.on("click", "visible-beacons", (e) => {
-        console.log("visible");
+        Logger.debug("visible");
         if (e.features) {
           const feature = e.features[0];
           //markerManager.setMarkerVisible(feature.properties?.id, false); No
@@ -311,27 +316,27 @@ export const Map: React.FunctionComponent = () => {
               feature.properties?.id,
               true
             ).catch((err) => {
-              console.error(`Failed to hide beacon: ${feature.properties?.id}`);
-              console.error(err);
+              Logger.error(`Failed to hide beacon: ${feature.properties?.id}`);
+              Logger.error(err);
             });
           }
         }
       });
       map.current.on("click", "hidden-beacons", (e) => {
-        console.log("hidden");
+        Logger.debug("hidden");
         if (e.features) {
-          console.log(e.features);
+          Logger.debug(e.features);
           const feature = e.features[0];
-          console.log(feature.properties?.id);
+          Logger.debug(feature.properties?.id);
           if (!DEVELOPER_MODE) {
             APIMiddleware.transmitBeaconHidden(
               feature.properties?.id,
               false
             ).catch((err) => {
-              console.error(
+              Logger.error(
                 `Failed to unhide beacon: ${feature.properties?.id}`
               );
-              console.error(err);
+              Logger.error(err);
             });
           }
         }

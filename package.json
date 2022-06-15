@@ -16,6 +16,7 @@
     "@testing-library/user-event": "^7.1.2",
     "axios": "^0.26.1",
     "csh-material-bootstrap": "^4.5.2",
+    "easylogger-ts": "^1.0.1",
     "fs": "^0.0.1-security",
     "history": "^5.0.0",
     "https": "^1.0.0",

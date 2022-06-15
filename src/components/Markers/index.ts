@@ -1,5 +1,9 @@
-import mapboxgl, { GeoJSONSource, Marker } from "mapbox-gl";
+/* External Modules */
+import mapboxgl, { GeoJSONSource } from "mapbox-gl";
 import { Position } from "geojson";
+import { v4 as uuidv4 } from "uuid";
+/* Local Modules */
+import Logger from "easylogger-ts";
 import {
   MutableMapRef,
   Beacon,
@@ -11,9 +15,9 @@ import {
   instanceOfMarkerFeatureQuery,
   MarkerFeatureQueryResult,
 } from "../types";
-import { v4 as uuidv4 } from "uuid";
-
+/* External CSS */
 import "../../../node_modules/mapbox-gl/dist/mapbox-gl.css";
+/* Local CSS */
 import "./Markers.scss";
 
 const BEACON_MARKER_DEFAULT_FILL_COLOR = "#00ff00";
@@ -223,7 +227,7 @@ class MarkerManager {
       );
       foundIn = MarkerGeojsonIdentifier.HiddenGeojson;
     } else {
-      console.log("queryFeature: entering ELSE");
+      Logger.debug("queryFeature: entering ELSE");
       // If markerGeojsonIdentifier is not specified, we'll search all geojsons
       // Check visible first
       let visibleParsedFeatures = this._visible_marker_geojson.data?.features.filter(
@@ -243,14 +247,14 @@ class MarkerManager {
       return { feature: <MarkerFeature>parsedFeatures[0], foundIn: foundIn };
     }
     if (parsedFeatures.length > 1) {
-      console.log("visibleGeo", this._visible_marker_geojson.data.features);
-      console.log("hiddenGeo", this._hidden_marker_geojson.data.features);
+      Logger.debug("visibleGeo", this._visible_marker_geojson.data.features);
+      Logger.debug("hiddenGeo", this._hidden_marker_geojson.data.features);
       throw Error("(queryFeature) Too many parsedFeatures (length > 1)");
     }
 
-    console.log(`queryFeature targetFeature: `, targetFeature);
-    console.log(`queryFeature foundIn: `, foundIn);
-    console.log(`queryFeature parsedFeatures: `, parsedFeatures);
+    Logger.debug(`queryFeature targetFeature: `, targetFeature);
+    Logger.debug(`queryFeature foundIn: `, foundIn);
+    Logger.debug(`queryFeature parsedFeatures: `, parsedFeatures);
     return null;
   }
 
@@ -275,7 +279,7 @@ class MarkerManager {
 
     if (instanceOfMarkerFeatureQuery(markerFeatureQuery)) {
       let test = this.removeMarker(targetFeature, fromGeojsonIdentifier);
-      console.log(`TEST ${test}`);
+      Logger.debug(`TEST ${test}`);
       this.addMarker(
         markerFeatureQuery.feature.properties.id,
         markerFeatureQuery.feature.properties.center,
@@ -330,9 +334,9 @@ class MarkerManager {
       return markerFeature;
     } // Already exists: update if different center coordinates
     else {
-      console.log("mfq id: ", id);
+      Logger.debug("mfq id: ", id);
       let markerFeatureQuery = this.queryFeature(id);
-      console.log("markerFeatureQuery: ", markerFeatureQuery);
+      Logger.debug("markerFeatureQuery: ", markerFeatureQuery);
       if (markerFeatureQuery) {
         if (instanceOfMarkerFeatureQuery(markerFeatureQuery)) {
           if (markerFeatureQuery.feature.properties.center !== center) {

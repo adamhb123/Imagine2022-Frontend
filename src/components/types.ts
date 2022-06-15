@@ -1,12 +1,11 @@
 import mapboxgl from "mapbox-gl";
-import { Position } from "geojson";
 import {
   FeatureCollection,
   Feature,
   Polygon,
   GeoJsonProperties,
+  Position,
 } from "geojson";
-import { time } from "console";
 export type MutableMapRef = React.MutableRefObject<mapboxgl.Map | undefined>;
 
 export enum MarkerGeojsonIdentifier {

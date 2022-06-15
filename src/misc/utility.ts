@@ -1,3 +1,26 @@
+// Definition of "primitive" is loose here
+export type PrimitiveTypeString =
+  | "boolean"
+  | "number"
+  | "bigint"
+  | "string"
+  | "symbol"
+  | "object";
+
+export const stringToPrimitive = (
+  string: string,
+  desiredPrimitive: PrimitiveTypeString
+) => {
+  return {
+    boolean: () => (string === "true" ? true : false),
+    number: () => Number(string),
+    bigint: () => BigInt(string),
+    string: () => string,
+    symbol: () => Symbol(string),
+    object: () => JSON.parse(string),
+  }[desiredPrimitive]();
+};
+
 export const buildPath = (...args: string[]) => {
   return args
     .map((part, i) => {
@@ -36,25 +59,19 @@ export const hideParentOnClick = (eventOrElement: MouseEvent | HTMLElement) => {
   toggleVisibility(elem as HTMLElement);
 };
 
-// Definition of "primitive" is loose here
-export type PrimitiveTypeString =
-  | "boolean"
-  | "number"
-  | "bigint"
-  | "string"
-  | "symbol"
-  | "object";
-
-export const stringToPrimitive = (
-  string: string,
-  desiredPrimitive: PrimitiveTypeString
-) => {
-  return {
-    boolean: () => (string === "true" ? true : false),
-    number: () => Number(string),
-    bigint: () => BigInt(string),
-    string: () => string,
-    symbol: () => Symbol(string),
-    object: () => JSON.parse(string),
-  }[desiredPrimitive]();
+export const getElementFromMouseEvent = (
+  event: MouseEvent,
+  fallbackId?: string
+): HTMLElement => {
+  let element = event.target as HTMLElement | null;
+  if (!element) {
+    if (fallbackId)
+      element = document.getElementById(fallbackId) as HTMLElement;
+    else {
+      throw new Error(
+        `elementClickedSafeguard: couldn't find element with fallbackId: ${fallbackId}`
+      );
+    }
+  }
+  return element;
 };

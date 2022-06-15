@@ -1,45 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "reactstrap";
-import { hideParentOnClick } from "../../misc/utility";
+import {
+  hideParentOnClick,
+  getElementFromMouseEvent,
+} from "../../misc/utility";
 import { AdminPanelModificationMode } from "../types";
 import "./AdminPanel.scss";
 
-function _elementClickedSafeguard(
-  event: MouseEvent,
-  fallbackId?: string
-): HTMLElement {
-  let element = event.target as HTMLElement | null;
-  if (!element) {
-    if (fallbackId)
-      element = document.getElementById(fallbackId) as HTMLElement;
-    else {
-      throw new Error(
-        `elementClickedSafeguard: couldn't find element with fallbackId: ${fallbackId}`
-      );
-    }
-  }
-  return element;
-}
-
 function onHideMarkersClicked(event: MouseEvent) {
-  const hideMarkersButton = _elementClickedSafeguard(event, "hide-markers");
-  
+  const hideMarkersButton = getElementFromMouseEvent(event, "hide-markers");
 }
 
 function onHideAllMarkersClicked(event: MouseEvent) {
-  const hideAllMarkersButton = _elementClickedSafeguard(
+  const hideAllMarkersButton = getElementFromMouseEvent(
     event,
     "hide-all-markers"
   );
 }
 
 function onUnhideMarkersClicked(event: MouseEvent) {
-  const unhideMarkersButton = _elementClickedSafeguard(event, "unhide-markers");
-
+  const unhideMarkersButton = getElementFromMouseEvent(event, "unhide-markers");
 }
 
 function onUnhideAllMarkersClicked(event: MouseEvent) {
-  const unhideAllMarkersButton = _elementClickedSafeguard(
+  const unhideAllMarkersButton = getElementFromMouseEvent(
     event,
     "unhide-all-markers"
   );
@@ -52,28 +36,34 @@ export const AdminPanel: React.FunctionComponent = () => {
   ] = useState<AdminPanelModificationMode | null>(null);
   useEffect(() => {
     /* Setup button click events */
+    // Close button
     const closeButton = document.getElementById("close-button");
+    closeButton?.addEventListener("click", hideParentOnClick);
+    // Hide Marker Mode
     const hideMarkersButton = document.getElementById("hide-markers");
-    const unhideMarkersButton = document.getElementById("unhide-markers");
+    hideMarkersButton?.addEventListener("click", (event: MouseEvent) => {
+      setCurrentMode(AdminPanelModificationMode.HideMarkers);
+      onHideMarkersClicked(event);
+    });
+    // Hide All One-hit
     const hideAllMarkersButton = document.getElementById("hide-all-markers");
+    hideAllMarkersButton?.addEventListener("click", (event: MouseEvent) => {
+      setCurrentMode(AdminPanelModificationMode.HideAllMarkers);
+      onHideAllMarkersClicked(event);
+    });
+    // Unhide Marker Mode
+    const unhideMarkersButton = document.getElementById("unhide-markers");
+    unhideMarkersButton?.addEventListener("click", (event: MouseEvent) => {
+      setCurrentMode(AdminPanelModificationMode.UnhideMarkers);
+      onUnhideMarkersClicked(event);
+    });
+    // Unhide All One-hit
     const unhideAllMarkersButton = document.getElementById(
       "unhide-all-markers"
     );
-    closeButton?.addEventListener("click", hideParentOnClick);
-    hideMarkersButton?.addEventListener("click", onHideMarkersClicked);
-    hideAllMarkersButton?.addEventListener("click", onHideAllMarkersClicked);
-    unhideMarkersButton?.addEventListener("click", onUnhideMarkersClicked);
-    unhideMarkersButton?.addEventListener("click", onUnhideAllMarkersClicked);
-    unhideMarkersButton?.addEventListener("click", () => {
-      onUnhideMarkersClicked(unhideMarkersButton as HTMLButtonElement);
-    });
-    hideAllMarkersButton?.addEventListener("click", () => {
-      setCurrentMode(AdminPanelModificationMode.HideAllMarkers);
-      onUnhideMarkersClicked(unhideMarkersButton as HTMLButtonElement);
-    });
-    unhideAllMarkersButton?.addEventListener("click", () => {
+    unhideAllMarkersButton?.addEventListener("click", (event: MouseEvent) => {
       setCurrentMode(AdminPanelModificationMode.UnhideAllMarkers);
-      onUnhideMarkersClicked(unhideMarkersButton as HTMLButtonElement);
+      onUnhideAllMarkersClicked(event);
     });
   });
   return (

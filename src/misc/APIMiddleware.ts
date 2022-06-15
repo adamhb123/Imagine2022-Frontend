@@ -1,4 +1,6 @@
+// Global Modules
 const axios = require("axios").default;
+// Local Modules
 import {
   API_ENDPOINTS,
   API_BACKEND_URL,
@@ -6,6 +8,7 @@ import {
   API_BACKEND_TOKEN,
 } from "./config";
 import { buildPath } from "../misc/utility";
+import Logger from "easylogger-ts";
 import MarkerManager from "../components/Markers";
 import { MAX_BOUNDS } from "../components/Map";
 import { BeaconJSON } from "../components/types";
@@ -16,7 +19,7 @@ const TEST_DATA_SECTION_COUNT = 2;
 let visibleTestData: BeaconJSON[];
 let hiddenTestData: BeaconJSON[];
 
-function _beaconJsonToArray(json: any): BeaconJSON[] {
+function beaconJsonToArray(json: any): BeaconJSON[] {
   const _flipArray = <T>(input: [T, T]): [T, T] => [input[1], input[0]];
   let list: BeaconJSON[] = [];
   Object.keys(json).forEach((key) => {
@@ -47,7 +50,7 @@ export async function retrieveBeacons(
         url: buildPath(API_BACKEND_URL, API_ENDPOINTS.BEACON_LOCATIONS),
         timeout: FETCH_BEACON_DATA_TIMEOUT_MS,
       })
-        .then((response: any) => _beaconJsonToArray(response.data))
+        .then((response: any) => beaconJsonToArray(response.data))
         .catch((error: any) => {
           provideError
             ? failureCallback?.call(null, error)
@@ -81,9 +84,15 @@ export async function transmitBeaconHidden(beacon_id: string, hidden: boolean) {
   }
 }
 
+export default {
+  initialize: initialize,
+  retrieveBeacons: retrieveBeacons,
+  transmitBeaconHidden: transmitBeaconHidden,
+};
+
 async function main() {
   let result = await retrieveBeacons();
-  console.log(result);
+  Logger.debug(result);
 }
 
 if (require.main === module) {
